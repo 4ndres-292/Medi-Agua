@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SocioController;
 use App\Http\Controllers\MedidorController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\NotificacionController;
 
+Route::apiResource('users', UserController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('socios', SocioController::class);
 Route::apiResource('medidores', MedidorController::class);

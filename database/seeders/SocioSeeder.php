@@ -14,8 +14,8 @@ class SocioSeeder extends Seeder
             'apellidos' => 'Garcia Lopez',
             'ci'        => '7025489',
             'telefono'  => '76541230',
-            'direccion' => 'Av. Los Libradores No. 1245, Zona Villa Fátima',
-            'estado'    => 'Activo',
+            'direccion' => 'Av. Los Libradores No. 1245, Zona Villa Fatima',
+            'estado'    => 'activo',
         ]);
 
         Socio::create([
@@ -23,8 +23,8 @@ class SocioSeeder extends Seeder
             'apellidos' => 'Mamani Quispe',
             'ci'        => '5189632',
             'telefono'  => '71234568',
-            'direccion' => 'Calle Sucre No. 892, Zона Centro',
-            'estado'    => 'Activo',
+            'direccion' => 'Calle Sucre No. 892, Zona Centro',
+            'estado'    => 'activo',
         ]);
 
         Socio::create([
@@ -32,8 +32,8 @@ class SocioSeeder extends Seeder
             'apellidos' => 'Flores Mendoza',
             'ci'        => '6325874',
             'telefono'  => '78456123',
-            'direccion' => 'Av. Ballivián No. 567, Zona San Jorge',
-            'estado'    => 'Activo',
+            'direccion' => 'Av. Ballivian No. 567, Zona San Jorge',
+            'estado'    => 'activo',
         ]);
     }
 }

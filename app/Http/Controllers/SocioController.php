@@ -22,10 +22,10 @@ class SocioController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'nombres'   => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'ci'        => 'required|string|unique:socios,ci',
-            'telefono'  => 'nullable|string|max:20',
+            'nombres'   => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'apellidos' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'ci'        => 'required|string|unique:socios,ci|regex:/^[0-9]+$/',
+            'telefono'  => 'nullable|string|max:20|regex:/^[0-9]*$/',
             'direccion' => 'nullable|string|max:255',
             'estado'    => 'nullable|string|in:activo,inactivo',
         ]);
@@ -53,10 +53,10 @@ class SocioController extends Controller
     public function update(Request $request, Socio $socio): JsonResponse
     {
         $validated = $request->validate([
-            'nombres'   => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'ci'        => 'required|string|unique:socios,ci,' . $socio->id,
-            'telefono'  => 'nullable|string|max:20',
+            'nombres'   => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'apellidos' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'ci'        => 'required|string|unique:socios,ci,' . $socio->id . '|regex:/^[0-9]+$/',
+            'telefono'  => 'nullable|string|max:20|regex:/^[0-9]*$/',
             'direccion' => 'nullable|string|max:255',
             'estado'    => 'nullable|string|in:activo,inactivo',
         ]);
