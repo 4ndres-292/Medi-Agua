@@ -3,64 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Listar todos los usuarios (con su rol).
-     */
     public function index(): JsonResponse
     {
-        $users = User::with('role')->get();
+        $users = User::with('rol')->paginate(10);
 
-        return response()->json($users);
+        return response()->json([
+            'success' => true,
+            'message' => 'Lista de usuarios obtenida correctamente.',
+            'data' => $users,
+        ]);
     }
 
-    /**
-     * Crear un nuevo usuario.
-     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users,username',
-            'lastname' => 'required|string|max:255',
-            'email'    => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6',
-            'role_id'  => 'nullable|exists:roles,id',
+            'username' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'lastname' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role_id'  => 'required|exists:roles,id',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
-        $user->load('role');
 
-        return response()->json($user, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario creado correctamente.',
+            'data' => $user->load('rol'),
+        ], 201);
     }
 
-    /**
-     * Mostrar un usuario específico (con su rol).
-     */
     public function show(User $user): JsonResponse
     {
-        $user->load('role');
+        $user->load('rol', 'lecturas');
 
-        return response()->json($user);
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario obtenido correctamente.',
+            'data' => $user,
+        ]);
     }
 
-    /**
-     * Actualizar un usuario existente.
-     */
     public function update(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
-            'username' => 'sometimes|required|string|max:255|unique:users,username,' . $user->id,
-            'lastname' => 'sometimes|required|string|max:255',
-            'email'    => 'sometimes|required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|nullable|string|min:6',
-            'role_id'  => 'sometimes|nullable|exists:roles,id',
+            'username' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'lastname' => 'required|string|max:255|regex:/^[a-zA-ZñÑ\s]+$/',
+            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8',
+            'role_id'  => 'required|exists:roles,id',
         ]);
 
         if (!empty($validated['password'])) {
@@ -70,18 +69,21 @@ class UserController extends Controller
         }
 
         $user->update($validated);
-        $user->load('role');
 
-        return response()->json($user);
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario actualizado correctamente.',
+            'data' => $user->load('rol'),
+        ]);
     }
 
-    /**
-     * Eliminar un usuario.
-     */
     public function destroy(User $user): JsonResponse
     {
         $user->delete();
 
-        return response()->json(null, 204);
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario eliminado correctamente.',
+        ], 204);
     }
 }
