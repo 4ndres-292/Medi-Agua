@@ -1,58 +1,293 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prompt para generar el Backend de Medi-Agua (Laravel 13)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Actúa como un **Senior Backend Developer especializado en Laravel 13**, arquitectura REST API, buenas prácticas, SOLID y Clean Code.
 
-## About Laravel
+Estoy desarrollando un sistema llamado **Medi-Agua**, cuyo frontend será desarrollado posteriormente en **React**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Por el momento **NO quiero desarrollar React**, únicamente el backend que será consumido por Postman y posteriormente por React.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Objetivo
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Generar únicamente la capa de acceso a datos (Backend API REST).
 
-## Learning Laravel
+No quiero autenticación, vistas Blade, Livewire ni Inertia.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Todo debe responder mediante **JSON**.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+# Debes generar únicamente
 
-## Agentic Development
+- Migraciones
+- Modelos Eloquent
+- Controladores API
+- Rutas en `routes/api.php`
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+No debes generar:
 
-```bash
-composer require laravel/boost --dev
+- React
+- Blade
+- Resources
+- Seeders
+- Factories
+- Policies
+- Middleware personalizados
+- Tests
+- Autenticación
+- Swagger
+- Documentación OpenAPI
 
-php artisan boost:install
+---
+
+# Arquitectura
+
+El proyecto utilizará Laravel 13.
+
+Las rutas deben definirse únicamente en:
+
+```php
+routes/api.php
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Los controladores deben ser API Controllers.
 
-## Contributing
+Nunca utilizar:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```php
+return view(...);
 
-## Code of Conduct
+return redirect(...);
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Toda respuesta debe ser JSON.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Formato de respuesta exitoso
 
-## License
+Cuando una operación sea correcta devolver:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```json
+{
+    "success": true,
+    "message": "Mensaje descriptivo",
+    "data": {}
+}
+```
+
+Ejemplo:
+
+```json
+{
+    "success": true,
+    "message": "Socio creado correctamente.",
+    "data": {
+        ...
+    }
+}
+```
+
+---
+
+# Formato de errores
+
+Los errores también deben responder en JSON.
+
+Ejemplo para validación:
+
+```json
+{
+    "success": false,
+    "message": "Error de validación.",
+    "errors": {
+        "nombre": ["El nombre es obligatorio."]
+    }
+}
+```
+
+Ejemplo cuando no existe un recurso:
+
+```json
+{
+    "success": false,
+    "message": "Socio no encontrado."
+}
+```
+
+Ejemplo para errores internos:
+
+```json
+{
+    "success": false,
+    "message": "Ocurrió un error interno."
+}
+```
+
+Nunca devolver HTML.
+
+Nunca devolver páginas de error.
+
+---
+
+# Validaciones
+
+Utilizar las validaciones propias de Laravel.
+
+Validar todos los campos necesarios.
+
+Responder siempre con JSON.
+
+---
+
+# CRUD
+
+Cada controlador debe implementar:
+
+- index()
+- store()
+- show()
+- update()
+- destroy()
+
+Cada método debe devolver respuestas JSON.
+
+---
+
+# Rutas
+
+Utilizar únicamente:
+
+```php
+Route::apiResource(...)
+```
+
+No utilizar rutas web.
+
+---
+
+# Modelos
+
+Crear los modelos utilizando relaciones Eloquent correctamente.
+
+Utilizar:
+
+- hasMany
+- belongsTo
+- belongsToMany
+
+según corresponda.
+
+Definir correctamente:
+
+```php
+protected $fillable = [];
+```
+
+No utilizar `$guarded`.
+
+---
+
+# Relaciones
+
+Implementar todas las relaciones de la base de datos.
+
+Debe utilizarse correctamente la tabla pivote para la relación Muchos a Muchos entre Facturas y Tarifas.
+
+---
+
+# Migraciones
+
+Crear migraciones completas.
+
+Agregar:
+
+- Foreign Keys
+- Cascade cuando corresponda
+- Restricciones
+- Tipos de datos adecuados
+
+No omitir ninguna relación.
+
+---
+
+# Base de Datos
+
+La base de datos contiene las siguientes entidades:
+
+- Roles
+- Users
+- Socios
+- Medidores
+- Lecturas
+- Tarifas
+- Facturas
+- Facturas_Tarifas (tabla pivote)
+- Pagos
+- Notificaciones
+
+La relación entre Facturas y Tarifas es de Muchos a Muchos mediante la tabla pivote `facturas_tarifas`.
+
+La tabla pivote debe contener:
+
+- id
+- factura_id
+- tarifa_id
+- cantidad
+- precio_unitario
+- subtotal
+- created_at
+
+La tabla Facturas NO debe contener `tarifa_id`.
+
+---
+
+# Orden de desarrollo
+
+Generar los archivos en el siguiente orden:
+
+1. Migraciones
+2. Modelos
+3. Relaciones Eloquent
+4. Controladores API
+5. Rutas en `routes/api.php`
+
+No avanzar al siguiente paso hasta terminar completamente el anterior.
+
+---
+
+# Buenas prácticas
+
+Aplicar:
+
+- Clean Code
+- SOLID
+- Convenciones de Laravel 13
+- Nombres claros
+- Código reutilizable
+- Relaciones correctamente tipadas
+- Validaciones completas
+- Respuestas HTTP adecuadas
+
+Utilizar los códigos HTTP correspondientes:
+
+- 200 OK
+- 201 Created
+- 204 No Content
+- 400 Bad Request
+- 404 Not Found
+- 422 Unprocessable Entity
+- 500 Internal Server Error
+
+---
+
+# Resultado esperado
+
+Quiero un backend completamente funcional para ser probado en Postman.
+
+Posteriormente ese backend será consumido por React sin necesidad de modificar la lógica de los controladores.
+
+No expliques teoría.
+
+No hagas resúmenes.
+
+Genera directamente el código completo de cada archivo siguiendo el orden indicado.

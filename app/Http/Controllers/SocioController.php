@@ -3,43 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\Socio;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SocioController extends Controller
 {
-    public function index() {
-        $socios = Socio::paginate(10);
-        return view('socios.index', compact('socios'));
-    }
+    public function index(): JsonResponse
+    {
+        $socios = Socio::with('medidores')->paginate(10);
 
-    public function create() {
-        return view('socios.create');
-    }
-
-    public function store(Request $request) {
-        $request->validate([
-            'nombre'   => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
-            'cedula'   => 'required|string|unique:socios',
+        return response()->json([
+            'success' => true,
+            'message' => 'Lista de socios obtenida correctamente.',
+            'data' => $socios,
         ]);
-        Socio::create($request->all());
-        return redirect()->route('socios.index')->with('success', 'Socio creado.');
     }
 
-    public function edit(Socio $socio) {
-        return view('socios.edit', compact('socio'));
-    }
-
-    public function update(Request $request, Socio $socio) {
-        $request->validate([
-            'cedula' => 'required|string|unique:socios,cedula,' . $socio->id,
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'nombres'   => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'ci'        => 'required|string|unique:socios,ci',
+            'telefono'  => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'estado'    => 'nullable|string|in:activo,inactivo',
         ]);
-        $socio->update($request->all());
-        return redirect()->route('socios.index')->with('success', 'Socio actualizado.');
+
+        $socio = Socio::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Socio creado correctamente.',
+            'data' => $socio,
+        ], 201);
     }
 
-    public function destroy(Socio $socio) {
+    public function show(Socio $socio): JsonResponse
+    {
+        $socio->load('medidores', 'facturas', 'notificaciones');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Socio obtenido correctamente.',
+            'data' => $socio,
+        ]);
+    }
+
+    public function update(Request $request, Socio $socio): JsonResponse
+    {
+        $validated = $request->validate([
+            'nombres'   => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'ci'        => 'required|string|unique:socios,ci,' . $socio->id,
+            'telefono'  => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'estado'    => 'nullable|string|in:activo,inactivo',
+        ]);
+
+        $socio->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Socio actualizado correctamente.',
+            'data' => $socio,
+        ]);
+    }
+
+    public function destroy(Socio $socio): JsonResponse
+    {
         $socio->delete();
-        return redirect()->route('socios.index')->with('success', 'Socio eliminado.');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Socio eliminado correctamente.',
+        ], 204);
     }
 }
