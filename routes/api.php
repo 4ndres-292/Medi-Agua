@@ -12,6 +12,7 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\NotificacionController;
 
+Route::post('login', [UserController::class, 'login']);
 Route::apiResource('users', UserController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('socios', SocioController::class);

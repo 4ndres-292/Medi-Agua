@@ -18,10 +18,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'api_token',
     ];
 
     protected $hidden = [
         'password',
+        'api_token',
     ];
 
     protected function casts(): array

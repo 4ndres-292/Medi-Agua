@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -17,6 +19,36 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Lista de usuarios obtenida correctamente.',
             'data' => $users,
+        ]);
+    }
+    # Login de usuario y genración de token de acceso
+
+    public function login(Request $request): JsonResponse
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Las credenciales proporcionadas son incorrectas.'],
+            ]);
+        }
+
+        $token = Str::random(60);
+        $user->forceFill(['api_token' => $token])->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Inicio de sesión correcto.',
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user->makeHidden(['password'])->load('rol'),
+            ],
         ]);
     }
 
