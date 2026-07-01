@@ -62,7 +62,7 @@ class UserController extends Controller
             'role_id'  => 'required|exists:roles,id',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        //$validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
 
