@@ -20,6 +20,7 @@ use App\Http\Controllers\NotificacionController;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
 /*
 |--------------------------------------------------------------------------
