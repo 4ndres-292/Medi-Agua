@@ -2,7 +2,7 @@
 
 ## 🔥 Estado Actual del Sistema
 
-### ✅ Funcionando
+### 
 - Login con Sanctum tokens (sin sesiones Laravel)
 - Logout que invalida token correctamente
 - 48 rutas API protegidas con auth:sanctum

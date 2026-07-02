@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import AuthGuard from './components/auth/AuthGuard';
 import Login from './components/auth/Login';
 import Home from './pages/Home';
@@ -31,33 +32,35 @@ const root = ReactDOM.createRoot(container);
 root.render(
     <React.StrictMode>
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+            <AuthProvider>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
 
-                {/* Administración */}
-                <Route path="/users" element={<AuthGuard><Users /></AuthGuard>} />
-                <Route path="/roles" element={<AuthGuard><Roles /></AuthGuard>} />
-                <Route path="/socios" element={<AuthGuard><Socios /></AuthGuard>} />
-                <Route path="/medidores" element={<AuthGuard><Medidores /></AuthGuard>} />
-                <Route path="/lecturas" element={<AuthGuard><Lecturas /></AuthGuard>} />
-                <Route path="/tarifas" element={<AuthGuard><Tarifas /></AuthGuard>} />
-                <Route path="/facturas" element={<AuthGuard><Facturas /></AuthGuard>} />
-                <Route path="/pagos" element={<AuthGuard><Pagos /></AuthGuard>} />
-                <Route path="/notificaciones" element={<AuthGuard><Notificaciones /></AuthGuard>} />
+                    {/* Administración */}
+                    <Route path="/users" element={<AuthGuard><Users /></AuthGuard>} />
+                    <Route path="/roles" element={<AuthGuard><Roles /></AuthGuard>} />
+                    <Route path="/socios" element={<AuthGuard><Socios /></AuthGuard>} />
+                    <Route path="/medidores" element={<AuthGuard><Medidores /></AuthGuard>} />
+                    <Route path="/lecturas" element={<AuthGuard><Lecturas /></AuthGuard>} />
+                    <Route path="/tarifas" element={<AuthGuard><Tarifas /></AuthGuard>} />
+                    <Route path="/facturas" element={<AuthGuard><Facturas /></AuthGuard>} />
+                    <Route path="/pagos" element={<AuthGuard><Pagos /></AuthGuard>} />
+                    <Route path="/notificaciones" element={<AuthGuard><Notificaciones /></AuthGuard>} />
 
-                {/* Reportes */}
-                <Route path="/reportes/ingresos" element={<AuthGuard><Ingresos /></AuthGuard>} />
-                <Route path="/reportes/deudores" element={<AuthGuard><Deudores /></AuthGuard>} />
-                <Route path="/reportes/consumo" element={<AuthGuard><Consumo /></AuthGuard>} />
+                    {/* Reportes */}
+                    <Route path="/reportes/ingresos" element={<AuthGuard><Ingresos /></AuthGuard>} />
+                    <Route path="/reportes/deudores" element={<AuthGuard><Deudores /></AuthGuard>} />
+                    <Route path="/reportes/consumo" element={<AuthGuard><Consumo /></AuthGuard>} />
 
-                {/* Usuario */}
-                <Route path="/perfil" element={<AuthGuard><Perfil /></AuthGuard>} />
-                <Route path="/configuracion" element={<AuthGuard><Configuracion /></AuthGuard>} />
+                    {/* Usuario */}
+                    <Route path="/perfil" element={<AuthGuard><Perfil /></AuthGuard>} />
+                    <Route path="/configuracion" element={<AuthGuard><Configuracion /></AuthGuard>} />
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </AuthProvider>
         </BrowserRouter>
     </React.StrictMode>
 );

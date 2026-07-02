@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +9,7 @@ const Login: React.FC = () => {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -16,26 +17,14 @@ const Login: React.FC = () => {
         setError('');
 
         try {
-            const response = await api.post('/login', {
-                email,
-                password,
-            });
-
-            console.log('LOGIN OK:', response.data);
-
-            localStorage.setItem('token', response.data.data.token);
-
-            // 👉 redirigir a dashboard
+            await login(email, password);
             navigate('/dashboard');
-
         } catch (err: any) {
             console.error(err);
-
             setError(
                 err?.response?.data?.message ||
                 'Error al iniciar sesión'
             );
-
         } finally {
             setLoading(false);
         }

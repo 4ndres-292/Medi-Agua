@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
 
     const handleLogout = async () => {
-        try {
-            await api.post('/logout');
-        } catch (error) {
-            console.log('Logout error:', error);
-        } finally {
-            localStorage.removeItem('token');
-            navigate('/login');
-        }
+        await logout();
+        navigate('/login');
     };
 
     return (
@@ -32,7 +27,7 @@ const Navbar: React.FC = () => {
 
                     <div className="relative group cursor-pointer">
                         <span className="hover:text-sky-100 transition">
-                            Andrés ▼
+                            {user?.username || 'Usuario'} ▼
                         </span>
 
                         <div className="absolute right-0 mt-2 w-48 bg-white text-slate-800 rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200">

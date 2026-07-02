@@ -1,38 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Props {
     children: React.ReactNode;
 }
 
 const AuthGuard: React.FC<Props> = ({ children }) => {
-    const [valid, setValid] = useState<boolean | null>(null);
-    const token = localStorage.getItem('token');
+    const { isAuthenticated, loading } = useAuth();
 
-    useEffect(() => {
-        if (!token) {
-            setValid(false);
-            return;
-        }
-
-        api.get('/me')
-            .then(() => setValid(true))
-            .catch(() => {
-                localStorage.removeItem('token');
-                setValid(false);
-            });
-    }, [token]);
-
-    if (valid === null) {
-        return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
     }
 
-    if (!valid) {
+    if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
 
-    return children;
+    return <>{children}</>;
 };
 
 export default AuthGuard;

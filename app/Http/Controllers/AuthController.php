@@ -4,48 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
+use App\Http\Requests\Auth\LoginRequest;
+use App\Services\AuthService;
+use App\Http\Resources\LoginResource;
+use App\Support\ApiResponse;
 
 class AuthController extends Controller
 {
-    public function login(Request $request): JsonResponse
+    private AuthService $authService;
+
+    public function __construct(AuthService $authService)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $this->authService = $authService;
 
-        if (!Auth::guard('web')->once($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Credenciales inválidas.',
-            ], 401);
-        }
+        //$this->middleware('throttle:5,1')->only('login');
+    }
 
-        $user = Auth::user()->load('rol');
 
-        // Elimina cualquier token anterior si deseas permitir
-        // solo una sesión por dispositivo.
-        // $user->tokens()->delete();
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $data = $this->authService->login($request->validated());
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Inicio de sesión exitoso.',
-            'data' => [
-                'user' => $user,
-                'token' => $token,
-            ],
-        ]);
+        return ApiResponse::success(
+            new LoginResource($data),
+            'Inicio de sesión exitoso.'
+        );
     }
 
     public function me(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'data' => $request->user()->load('rol'),
-        ]);
+        $user = $request->user()->load('rol');
+
+        return ApiResponse::success(
+            new \App\Http\Resources\UserResource($user),
+            'Usuario autenticado.'
+        );
     }
 
     public function logout(Request $request): JsonResponse
@@ -56,9 +50,6 @@ class AuthController extends Controller
             $user->currentAccessToken()->delete();
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Sesión cerrada correctamente.',
-        ]);
+        return ApiResponse::success(null, 'Sesión cerrada correctamente.');
     }
 }
