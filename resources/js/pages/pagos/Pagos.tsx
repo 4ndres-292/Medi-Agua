@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Layout from '../../components/layout/Layout';
+// NUEVO: import del widget que muestra/permite subir el QR de pagos.
+import QrPagoWidget from './QrPagoWidget';
 
 interface Pago {
     id: number;
@@ -16,7 +18,15 @@ const Pagos: React.FC = () => {
 
     useEffect(() => {
         api.get('/pagos')
-            .then(res => setPagos(res.data.data))
+            .then(res => {
+                // CORREGIDO: mismo problema que tuvimos en Facturas — el backend
+                // devuelve los pagos paginados (Pago::paginate(10)), así que el
+                // array real puede venir un nivel más adentro (res.data.data.data).
+                // Esto evita el error "pagos.map is not a function" y la pantalla en blanco.
+                const payload = res.data.data;
+                const lista = Array.isArray(payload) ? payload : payload?.data ?? [];
+                setPagos(lista);
+            })
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
     }, []);
@@ -30,9 +40,16 @@ const Pagos: React.FC = () => {
                 </button>
             </div>
 
+            {/* NUEVO: widget del QR de pagos — visible para todos, con formulario
+                de subida visible solo si el usuario logueado es Administrador. */}
+            <QrPagoWidget />
+
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
                     <div className="p-8 text-center text-gray-500">Cargando...</div>
+                ) : pagos.length === 0 ? (
+                    // NUEVO: mensaje claro cuando no hay pagos, en vez de tabla vacía sin contexto.
+                    <div className="p-8 text-center text-gray-500">No hay pagos registrados.</div>
                 ) : (
                     <table className="w-full text-left">
                         <thead className="bg-gray-50 border-b">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pago;
+use App\Models\Factura;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,10 @@ class PagoController extends Controller
         ]);
 
         $pago = Pago::create($validated);
+
+        // NUEVO: al registrarse un pago, la factura asociada pasa a "Pagada".
+        // Se asume pago completo (no hay pagos parciales en este sistema).
+        Factura::where('id', $validated['factura_id'])->update(['estado' => 'Pagada']);
 
         return response()->json([
             'success' => true,

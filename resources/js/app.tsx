@@ -12,7 +12,11 @@ import Medidores from './pages/medidores/Medidores';
 import Lecturas from './pages/lecturas/Lecturas';
 import Tarifas from './pages/tarifas/Tarifas';
 import Facturas from './pages/facturas/Facturas';
+import NuevaFactura from './pages/facturas/NuevaFactura';
+import DetalleFactura from './pages/facturas/DetalleFactura';
 import Pagos from './pages/pagos/Pagos';
+import NuevoPago from './pages/pagos/NuevoPago';
+import DetallePago from './pages/pagos/DetallePago';
 import Notificaciones from './pages/notificaciones/Notificaciones';
 import Ingresos from './pages/reportes/Ingresos';
 import Deudores from './pages/reportes/Deudores';
@@ -43,8 +47,15 @@ root.render(
                 <Route path="/medidores" element={<AuthGuard><Medidores /></AuthGuard>} />
                 <Route path="/lecturas" element={<AuthGuard><Lecturas /></AuthGuard>} />
                 <Route path="/tarifas" element={<AuthGuard><Tarifas /></AuthGuard>} />
+
                 <Route path="/facturas" element={<AuthGuard><Facturas /></AuthGuard>} />
+                <Route path="/facturas/nueva" element={<AuthGuard><NuevaFactura /></AuthGuard>} />
+                <Route path="/facturas/:id" element={<AuthGuard><DetalleFactura /></AuthGuard>} />
+
                 <Route path="/pagos" element={<AuthGuard><Pagos /></AuthGuard>} />
+                <Route path="/pagos/nuevo" element={<AuthGuard><NuevoPago /></AuthGuard>} />
+                <Route path="/pagos/:id" element={<AuthGuard><DetallePago /></AuthGuard>} />
+
                 <Route path="/notificaciones" element={<AuthGuard><Notificaciones /></AuthGuard>} />
 
                 {/* Reportes */}
