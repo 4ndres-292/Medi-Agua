@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Factura;
+use App\Models\Tarifa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FacturaController extends Controller
 {
@@ -22,33 +24,44 @@ class FacturaController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'numero'            => 'required|string|unique:facturas,numero',
             'socio_id'          => 'required|exists:socios,id',
             'lectura_id'        => 'required|exists:lecturas,id',
-            'monto_total'       => 'required|numeric|min:0',
-            'fecha_emision'     => 'required|date',
-            'fecha_vencimiento' => 'required|date|after_or_equal:fecha_emision',
-            'estado'            => 'nullable|string|in:Pendiente,Pagada,Vencida,Anulada',
-            'tarifas'           => 'required|array|min:1',
-            'tarifas.*.tarifa_id'       => 'required|exists:tarifas,id',
-            'tarifas.*.cantidad'        => 'required|numeric|min:0',
-            'tarifas.*.precio_unitario' => 'required|numeric|min:0',
-            'tarifas.*.subtotal'        => 'required|numeric|min:0',
+            'fecha_vencimiento' => 'required|date|after_or_equal:today',
+            'tarifas'                    => 'required|array|min:1',
+            'tarifas.*.tarifa_id'        => 'required|exists:tarifas,id',
+            'tarifas.*.cantidad'         => 'required|numeric|min:0.01',
         ]);
 
-        $tarifas = $validated['tarifas'];
-        unset($validated['tarifas']);
+        // Genera un número de factura correlativo simple (000001, 000002...)
+        $ultimoId = Factura::max('id') ?? 0;
+        $numero = str_pad($ultimoId + 1, 6, '0', STR_PAD_LEFT);
 
-        $factura = Factura::create($validated);
+        $montoTotal = 0;
+        $detalle = [];
 
-        foreach ($tarifas as $tarifa) {
-            $factura->tarifas()->attach($tarifa['tarifa_id'], [
-                'cantidad'        => $tarifa['cantidad'],
-                'precio_unitario' => $tarifa['precio_unitario'],
-                'subtotal'        => $tarifa['subtotal'],
-            ]);
+        foreach ($validated['tarifas'] as $item) {
+            $tarifa = Tarifa::findOrFail($item['tarifa_id']);
+            $subtotal = $tarifa->precio * $item['cantidad'];
+            $montoTotal += $subtotal;
+
+            $detalle[$item['tarifa_id']] = [
+                'cantidad'        => $item['cantidad'],
+                'precio_unitario' => $tarifa->precio,
+                'subtotal'        => $subtotal,
+            ];
         }
 
+        $factura = Factura::create([
+            'numero'            => $numero,
+            'socio_id'          => $validated['socio_id'],
+            'lectura_id'        => $validated['lectura_id'],
+            'monto_total'       => $montoTotal,
+            'fecha_emision'     => now()->toDateString(),
+            'fecha_vencimiento' => $validated['fecha_vencimiento'],
+            'estado'            => 'Pendiente',
+        ]);
+
+        $factura->tarifas()->attach($detalle);
         $factura->load('socio', 'lectura', 'tarifas');
 
         return response()->json([
@@ -72,34 +85,10 @@ class FacturaController extends Controller
     public function update(Request $request, Factura $factura): JsonResponse
     {
         $validated = $request->validate([
-            'numero'            => 'required|string|unique:facturas,numero,' . $factura->id,
-            'socio_id'          => 'required|exists:socios,id',
-            'lectura_id'        => 'required|exists:lecturas,id',
-            'monto_total'       => 'required|numeric|min:0',
-            'fecha_emision'     => 'required|date',
-            'fecha_vencimiento' => 'required|date|after_or_equal:fecha_emision',
-            'estado'            => 'nullable|string|in:Pendiente,Pagada,Vencida,Anulada',
-            'tarifas'           => 'required|array|min:1',
-            'tarifas.*.tarifa_id'       => 'required|exists:tarifas,id',
-            'tarifas.*.cantidad'        => 'required|numeric|min:0',
-            'tarifas.*.precio_unitario' => 'required|numeric|min:0',
-            'tarifas.*.subtotal'        => 'required|numeric|min:0',
+            'estado' => 'required|string|in:Pendiente,Pagada,Vencida,Anulada',
         ]);
 
-        $tarifas = $validated['tarifas'];
-        unset($validated['tarifas']);
-
         $factura->update($validated);
-
-        $factura->tarifas()->detach();
-        foreach ($tarifas as $tarifa) {
-            $factura->tarifas()->attach($tarifa['tarifa_id'], [
-                'cantidad'        => $tarifa['cantidad'],
-                'precio_unitario' => $tarifa['precio_unitario'],
-                'subtotal'        => $tarifa['subtotal'],
-            ]);
-        }
-
         $factura->load('socio', 'lectura', 'tarifas');
 
         return response()->json([
