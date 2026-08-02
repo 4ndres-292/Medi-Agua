@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             await api.post('/logout');
         } catch (error) {
-            // Ignorar error, limpiar de todas formas
+            console.error('Error al cerrar sesión:', error);
         } finally {
             localStorage.removeItem('token');
             setToken(null);

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use App\Http\Resources\LoginResource;
+use App\Http\Resources\UserResource;
 use App\Support\ApiResponse;
 
 class AuthController extends Controller
@@ -34,22 +35,21 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->load('rol');
+        $user = $this->authService->me($request->user());
 
         return ApiResponse::success(
-            new \App\Http\Resources\UserResource($user),
+            new UserResource($user),
             'Usuario autenticado.'
         );
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $user = $request->user();
+        $this->authService->logout($request->user());
 
-        if ($user && $user->currentAccessToken()) {
-            $user->currentAccessToken()->delete();
-        }
-
-        return ApiResponse::success(null, 'Sesión cerrada correctamente.');
+        return ApiResponse::success(
+            null,
+            'Sesión cerrada correctamente.'
+        );
     }
 }

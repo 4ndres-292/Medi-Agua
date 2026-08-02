@@ -24,6 +24,18 @@ class AuthService
         ];
     }
 
+    public function me(User $user): User
+    {
+        return $user->load('rol');
+    }
+
+    public function logout(User $user): void
+    {
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+        }
+    }
+
     private function findUserByEmail(string $email): User
     {
         $user = User::where('email', $email)->first();
