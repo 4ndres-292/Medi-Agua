@@ -19,16 +19,7 @@ const Login: React.FC = () => {
         setError('');
 
         try {
-            const response = await api.post('/login', {
-                email,
-                password,
-            });
-
-            console.log('LOGIN OK:', response.data);
-
-            localStorage.setItem('token', response.data.data.token);
-
-            // 👉 redirigir a dashboard
+            await login(email, password);
             navigate('/dashboard');
         } catch (err: any) {
             console.error(err);

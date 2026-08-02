@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "Medi-Agua - Google OAuth API",
+    "description": "Endpoints para autenticación con Google OAuth en Medi-Agua.\n\n**Flujo:**\n1. GET /auth/google/redirect → Redirige a Google para autorización\n2. Google autoriza → Redirige a /auth/google/callback\n3. Backend crea/busca usuario → Retorna token Sanctum\n\n**Nota:** Este flujo es un redirect del navegador, no un request AJAX estándar.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "Google OAuth - Redirect",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/google/redirect",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "google", "redirect"]
+        },
+        "description": "Redirige al usuario a Google para autorizar la aplicación. Retorna un redirect 302 a accounts.google.com."
+      },
+      "response": []
+    },
+    {
+      "name": "Google OAuth - Callback",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/google/callback?code=AUTHORIZATION_CODE&state=STATE_PARAMETER",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "google", "callback"],
+          "query": [
+            {
+              "key": "code",
+              "value": "AUTHORIZATION_CODE",
+              "description": "Código de autorización de Google (se obtiene del redirect)"
+            },
+            {
+              "key": "state",
+              "value": "STATE_PARAMETER",
+              "description": "Parámetro state para prevenir CSRF"
+            }
+          ]
+        },
+        "description": "Endpoint de callback que Google llama después de la autorización. El backend intercambia el code por un token, crea/busca el usuario, y retorna un token Sanctum.\n\n**Nota:** Este endpoint es llamado automáticamente por el navegador después del redirect. No se puede llamar directamente desde Postman sin un code válido."
+      },
+      "response": [
+        {
+          "name": "Exitoso - Nuevo usuario",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback?code=xxx&state=xxx",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google", "callback"],
+              "query": [
+                { "key": "code", "value": "xxx" },
+                { "key": "state", "value": "xxx" }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Inicio de sesión con Google exitoso.\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"username\": \"Juan García\",\n      \"lastname\": \"\",\n      \"email\": \"juan.garcia@gmail.com\",\n      \"role\": {\n        \"id\": 4,\n        \"name\": \"Comun\"\n      }\n    },\n    \"token\": \"1|abc123def456...\"\n  },\n  \"errors\": null\n}"
+        },
+        {
+          "name": "Exitoso - Usuario existente",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback?code=xxx&state=xxx",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google", "callback"],
+              "query": [
+                { "key": "code", "value": "xxx" },
+                { "key": "state", "value": "xxx" }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Inicio de sesión con Google exitoso.\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"username\": \"Juan\",\n      \"lastname\": \"García\",\n      \"email\": \"juan.garcia@gmail.com\",\n      \"role\": {\n        \"id\": 1,\n        \"name\": \"Administrador\"\n      }\n    },\n    \"token\": \"1|abc123def456...\"\n  },\n  \"errors\": null\n}"
+        },
+        {
+          "name": "Error - Estado inválido",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback?code=invalid&state=invalid",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google", "callback"],
+              "query": [
+                { "key": "code", "value": "invalid" },
+                { "key": "state", "value": "invalid" }
+              ]
+            }
+          },
+          "status": "Internal Server Error",
+          "code": 500,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Error al autenticar con Google. Intente nuevamente.\",\n  \"data\": null,\n  \"errors\": null\n}"
+        }
+      ]
+    }
+  ]
+}

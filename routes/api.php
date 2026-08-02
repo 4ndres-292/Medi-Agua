@@ -19,7 +19,23 @@ use App\Http\Controllers\NotificacionController;
 |--------------------------------------------------------------------------
 */
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
+
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:3,1');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:3,1');
+
+/*
+|--------------------------------------------------------------------------
+| Google OAuth
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/auth/google/redirect', [AuthController::class, 'googleRedirect']);
+
+Route::get('/auth/google/callback', [AuthController::class, 'googleCallback']);
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 
     // Solo admin puede gestionar usuarios y roles
     Route::middleware('role:admin')->group(function () {

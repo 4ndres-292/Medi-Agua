@@ -13,13 +13,31 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
+        // $middleware->statefulApi(); // Token-only mode: no session/cookie auth needed
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
         ]);
+
+        \Illuminate\Auth\Middleware\Authenticate::redirectUsing(function (Request $request) {
+            if ($request->is('api/*')) {
+                return null;
+            }
+            return route('login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $exception) {
+            if (request()->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $exception->getMessage() ?: 'Unauthenticated.',
+                    'data' => null,
+                    'errors' => null,
+                ], 401);
+            }
+        });
     })->create();

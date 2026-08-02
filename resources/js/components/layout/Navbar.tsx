@@ -9,6 +9,7 @@ const Navbar: React.FC = () => {
     const [userOpen, setUserOpen] = useState(false);
 
     const navigate = useNavigate();
+    const { logout, user } = useAuth();
 
     const handleLogout = async () => {
         await logout();
@@ -37,7 +38,7 @@ const Navbar: React.FC = () => {
 
                     <div className="relative group cursor-pointer">
                         <span className="hover:text-sky-100 transition">
-                            Andrés ▼
+                            {user?.username || 'Usuario'} ▼
                         </span>
 
                         {userOpen && (

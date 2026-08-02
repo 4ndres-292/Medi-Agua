@@ -1,0 +1,145 @@
+{
+  "info": {
+    "name": "Medi-Agua - Register API",
+    "description": "Colección de pruebas para el endpoint POST /api/register",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "Registro Exitoso",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"Juan\",\n  \"lastname\": \"Pérez\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"secret123\",\n  \"password_confirmation\": \"secret123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/register",
+          "host": ["{{base_url}}"],
+          "path": ["register"]
+        }
+      },
+      "response": {
+        "status": "Created",
+        "code": 201,
+        "body": "{\n  \"success\": true,\n  \"message\": \"Usuario registrado exitosamente.\",\n  \"data\": {\n    \"user\": {\n      \"id\": 2,\n      \"username\": \"Juan\",\n      \"lastname\": \"Pérez\",\n      \"email\": \"juan@example.com\",\n      \"role\": {\n        \"id\": 4,\n        \"name\": \"Comun\"\n      }\n    },\n    \"token\": \"2|abc123def456...\"\n  },\n  \"errors\": null\n}"
+      }
+    },
+    {
+      "name": "Email Duplicado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"Juan\",\n  \"lastname\": \"Pérez\",\n  \"email\": \"existente@example.com\",\n  \"password\": \"secret123\",\n  \"password_confirmation\": \"secret123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/register",
+          "host": ["{{base_url}}"],
+          "path": ["register"]
+        }
+      },
+      "response": {
+        "status": "Unprocessable Entity",
+        "code": 422,
+        "body": "{\n  \"message\": \"Los datos proporcionados no son válidos.\",\n  \"errors\": {\n    \"email\": [\n      \"El correo electrónico ya está en uso.\"\n    ]\n  }\n}"
+      }
+    },
+    {
+      "name": "Password Inválido (menor al mínimo)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"Juan\",\n  \"lastname\": \"Pérez\",\n  \"email\": \"juan2@example.com\",\n  \"password\": \"short\",\n  \"password_confirmation\": \"short\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/register",
+          "host": ["{{base_url}}"],
+          "path": ["register"]
+        }
+      },
+      "response": {
+        "status": "Unprocessable Entity",
+        "code": 422,
+        "body": "{\n  \"message\": \"Los datos proporcionados no son válidos.\",\n  \"errors\": {\n    \"password\": [\n      \"La contraseña debe tener al menos 8 caracteres.\"\n    ]\n  }\n}"
+      }
+    },
+    {
+      "name": "Confirmación de Contraseña Incorrecta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"Juan\",\n  \"lastname\": \"Pérez\",\n  \"email\": \"juan3@example.com\",\n  \"password\": \"secret123\",\n  \"password_confirmation\": \"different123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/register",
+          "host": ["{{base_url}}"],
+          "path": ["register"]
+        }
+      },
+      "response": {
+        "status": "Unprocessable Entity",
+        "code": 422,
+        "body": "{\n  \"message\": \"Los datos proporcionados no son válidos.\",\n  \"errors\": {\n    \"password\": [\n      \"La confirmación de contraseña no coincide.\"\n    ]\n  }\n}"
+      }
+    },
+    {
+      "name": "Campos Obligatorios Vacíos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{base_url}}/register",
+          "host": ["{{base_url}}"],
+          "path": ["register"]
+        }
+      },
+      "response": {
+        "status": "Unprocessable Entity",
+        "code": 422,
+        "body": "{\n  \"message\": \"Los datos proporcionados no son válidos.\",\n  \"errors\": {\n    \"username\": [\n      \"El campo de nombre es obligatorio.\"\n    ],\n    \"lastname\": [\n      \"El campo de apellido es obligatorio.\"\n    ],\n    \"email\": [\n      \"El campo de correo electrónico es obligatorio.\"\n    ],\n    \"password\": [\n      \"El campo de contraseña es obligatorio.\"\n    ]\n  }\n}"
+      }
+    }
+  ]
+}

@@ -13,9 +13,9 @@ class UserSeeder extends Seeder
         User::create([
             'username' => 'Andres',
             'lastname' => 'Choquecahuana Cahuana',
-            'email'    => 'choquecahuanaandresoriginal@gmail.com',
+            'email' => 'choquecahuanaandresoriginal@gmail.com',
             'password' => Hash::make('12345678'),
-            'role_id'  => 1,
+            'rol_id' => 1,
         ]);
     }
 }
