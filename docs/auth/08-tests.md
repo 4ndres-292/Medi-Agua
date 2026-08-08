@@ -6,9 +6,9 @@ Documentación completa de la suite de tests del módulo de autenticación.
 
 | Métrica | Valor |
 |---------|-------|
-| Total de tests | 86 |
-| Aserciones | 252 |
-| Tiempo de ejecución | ~3.7 segundos |
+| Total de tests | 127 |
+| Aserciones | 367 |
+| Tiempo de ejecución | ~4.8 segundos |
 | Base de datos | SQLite en memoria |
 | Framework de tests | PHPUnit (Laravel) |
 
@@ -443,6 +443,32 @@ php artisan test --filter=LoginTest
 | POST /forgot-password | 7 | ✅ Completo |
 | POST /reset-password | 8 | ✅ Completo |
 | GET /google/* | 22 | ✅ Completo |
+
+## SocioTest (20 tests)
+
+| Endpoint | Tests | Estado |
+|----------|-------|--------|
+| GET /api/socios | 2 | ✅ Completo |
+| POST /api/socios | 4 | ✅ Completo |
+| GET /api/socios/{id} | 3 | ✅ Completo |
+| PUT /api/socios/{id} | 3 | ✅ Completo |
+| PATCH /api/socios/{id} | 1 | ✅ Completo |
+| DELETE /api/socios/{id} | 2 | ✅ Completo |
+| Auth | 1 | ✅ Completo |
+| Validaciones | 4 | ✅ Completo |
+
+## MedidorTest (19 tests)
+
+| Endpoint | Tests | Estado |
+|----------|-------|--------|
+| GET /api/medidores | 2 | ✅ Completo |
+| POST /api/medidores | 5 | ✅ Completo |
+| GET /api/medidores/{id} | 3 | ✅ Completo |
+| PUT /api/medidores/{id} | 3 | ✅ Completo |
+| PATCH /api/medidores/{id} | 1 | ✅ Completo |
+| DELETE /api/medidores/{id} | 2 | ✅ Completo |
+| Auth | 1 | ✅ Completo |
+| Validaciones | 2 | ✅ Completo |
 
 ## Configuración de testing
 

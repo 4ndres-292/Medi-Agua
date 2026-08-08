@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin y operador pueden gestionar socios, medidores, lecturas, tarifas
     Route::middleware('role:admin,operator')->group(function () {
         Route::apiResource('socios', SocioController::class);
-        Route::apiResource('medidores', MedidorController::class);
+        Route::apiResource('medidores', MedidorController::class)->parameters(['medidores' => 'medidor']);
         Route::apiResource('lecturas', LecturaController::class);
         Route::apiResource('tarifas', TarifaController::class);
     });
@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Todos los autenticados pueden ver notificaciones
-    Route::apiResource('notificaciones', NotificacionController::class);
+    Route::apiResource('notificaciones', NotificacionController::class)->parameters(['notificaciones' => 'notificacion']);
 
     // Reportes: todos pueden ver
     Route::get('reportes/ingresos', [ReportesController::class, 'ingresos']);

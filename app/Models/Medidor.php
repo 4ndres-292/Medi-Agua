@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Medidor extends Model
 {
     protected $table = 'medidores';
-    protected $fillable = ['codigo', 'ubicacion', 'socio_id', 'estado'];
+    protected $fillable = ['codigo', 'socio_id', 'observacion'];
 
     public function socio(): BelongsTo
     {

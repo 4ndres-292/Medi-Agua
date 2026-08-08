@@ -4,10 +4,9 @@ import Layout from '../../components/layout/Layout';
 
 interface Medidor {
     id: number;
-    numero: string;
+    codigo: string;
     socio_id: number;
-    estado: string;
-    ubicacion: string;
+    observacion: string | null;
 }
 
 const Medidores: React.FC = () => {
@@ -16,7 +15,7 @@ const Medidores: React.FC = () => {
 
     useEffect(() => {
         api.get('/medidores')
-            .then(res => setMedidores(res.data.data))
+            .then(res => setMedidores(res.data.data.data))
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
     }, []);
@@ -38,10 +37,9 @@ const Medidores: React.FC = () => {
                         <thead className="bg-gray-50 border-b">
                             <tr>
                                 <th className="px-6 py-3 text-sm font-medium text-gray-500">ID</th>
-                                <th className="px-6 py-3 text-sm font-medium text-gray-500">Número</th>
+                                <th className="px-6 py-3 text-sm font-medium text-gray-500">Codigo</th>
                                 <th className="px-6 py-3 text-sm font-medium text-gray-500">Socio ID</th>
-                                <th className="px-6 py-3 text-sm font-medium text-gray-500">Ubicación</th>
-                                <th className="px-6 py-3 text-sm font-medium text-gray-500">Estado</th>
+                                <th className="px-6 py-3 text-sm font-medium text-gray-500">Observacion</th>
                                 <th className="px-6 py-3 text-sm font-medium text-gray-500">Acciones</th>
                             </tr>
                         </thead>
@@ -49,14 +47,9 @@ const Medidores: React.FC = () => {
                             {medidores.map(medidor => (
                                 <tr key={medidor.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 text-sm text-gray-900">{medidor.id}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{medidor.numero}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">{medidor.codigo}</td>
                                     <td className="px-6 py-4 text-sm text-gray-500">{medidor.socio_id}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">{medidor.ubicacion}</td>
-                                    <td className="px-6 py-4 text-sm">
-                                        <span className={`px-2 py-1 rounded-full text-xs ${medidor.estado === 'activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                            {medidor.estado}
-                                        </span>
-                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">{medidor.observacion ?? '-'}</td>
                                     <td className="px-6 py-4 text-sm">
                                         <button className="text-blue-600 hover:text-blue-800 mr-3">Editar</button>
                                         <button className="text-red-600 hover:text-red-800">Eliminar</button>

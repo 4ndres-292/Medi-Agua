@@ -10,24 +10,21 @@ class MedidorSeeder extends Seeder
     public function run(): void
     {
         Medidor::create([
-            'codigo'    => '000020',
-            'ubicacion' => 'Av. Los Libradores No. 1245, Zona Villa Fátima',
-            'socio_id'  => 1,
-            'estado'    => 'activo',
+            'codigo'     => '000020',
+            'socio_id'   => 1,
+            'observacion' => 'Medidor principal del socio',
         ]);
 
         Medidor::create([
-            'codigo'    => '000040',
-            'ubicacion' => 'Calle Sucre No. 892, Zona Centro',
-            'socio_id'  => 2,
-            'estado'    => 'activo',
+            'codigo'     => '000040',
+            'socio_id'   => 2,
+            'observacion' => null,
         ]);
 
         Medidor::create([
-            'codigo'    => '000060',
-            'ubicacion' => 'Av. Ballivián No. 567, Zona San Jorge',
-            'socio_id'  => 3,
-            'estado'    => 'activo',
+            'codigo'     => '000060',
+            'socio_id'   => 3,
+            'observacion' => 'Medidor secundario',
         ]);
     }
 }

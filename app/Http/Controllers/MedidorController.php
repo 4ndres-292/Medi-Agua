@@ -23,10 +23,9 @@ class MedidorController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'codigo'    => 'required|string|unique:medidores,codigo',
-            'ubicacion' => 'required|string|max:255',
-            'socio_id'  => 'required|exists:socios,id',
-            'estado'    => 'required|string|in:activo,inactivo',
+            'codigo'     => 'required|string|unique:medidores,codigo',
+            'socio_id'   => 'required|exists:socios,id',
+            'observacion' => 'nullable|string|max:1000',
         ]);
 
         $medidor = Medidor::create($validated);
@@ -52,10 +51,9 @@ class MedidorController extends Controller
     public function update(Request $request, Medidor $medidor): JsonResponse
     {
         $validated = $request->validate([
-            'codigo'    => 'required|string|unique:medidores,codigo,' . $medidor->id,
-            'ubicacion' => 'required|string|max:255',
-            'socio_id'  => 'required|exists:socios,id',
-            'estado'    => 'required|string|in:activo,inactivo',
+            'codigo'     => 'required|string|unique:medidores,codigo,' . $medidor->id,
+            'socio_id'   => 'required|exists:socios,id',
+            'observacion' => 'nullable|string|max:1000',
         ]);
 
         $medidor->update($validated);

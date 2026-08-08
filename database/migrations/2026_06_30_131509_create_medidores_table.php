@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('medidores', function (Blueprint $table) {
             $table->id();
             $table->string('codigo')->unique();
-            $table->string('ubicacion');
             $table->foreignId('socio_id')->constrained('socios')->onDelete('cascade');
-            $table->string('estado')->default('activo');
+            $table->text('observacion')->nullable();
             $table->timestamps();
         });
     }

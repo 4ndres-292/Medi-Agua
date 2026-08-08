@@ -123,14 +123,14 @@ Representa a los clientes o propietarios del servicio de agua.
 
 Representa cada medidor físico instalado.
 
-| Campo      | Tipo      |
-| ---------- | --------- |
-| id         | Integer   |
-| codigo     | Varchar   |
-| ubicacion  | Varchar   |
-| socio_id   | Integer   |
-| estado     | Varchar   |
-| created_at | Timestamp |
+| Campo        | Tipo      |
+| ------------ | --------- |
+| id           | Integer   |
+| codigo       | Varchar   |
+| socio_id     | Integer   |
+| observacion  | Text      |
+| created_at   | Timestamp |
+| updated_at   | Timestamp |
 
 ### Relaciones
 

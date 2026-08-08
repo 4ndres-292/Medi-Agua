@@ -18,7 +18,7 @@ class EnsureUserHasRole
 
         $allowedRoles = array_map('trim', explode(',', $roles));
 
-        if (!in_array($user->role_id, $this->getRoleIds($allowedRoles))) {
+        if (!in_array($user->rol_id, $this->getRoleIds($allowedRoles))) {
             return ApiResponse::error('No tiene permisos para realizar esta acción.', null, 403);
         }
 
