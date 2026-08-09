@@ -8,17 +8,29 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
-        <div className="min-h-screen flex flex-col bg-sky-50">
+        <div className="min-h-screen flex flex-col bg-[#EFF9FE]">
 
-            {/* Barra superior */}
+            {/* =========================================
+                BARRA SUPERIOR
+            ========================================= */}
             <Navbar />
 
-            {/* Contenido principal */}
-            <main className="flex-1 container mx-auto px-6 py-6">
+
+            {/* =========================================
+                CONTENIDO PRINCIPAL
+            ========================================= */}
+
+            <main className="flex-1 bg-[#EFF9FE]">
+
                 {children}
+
             </main>
 
-            {/* Pie de página */}
+
+            {/* =========================================
+                PIE DE PÁGINA
+            ========================================= */}
+
             <Footer />
 
         </div>

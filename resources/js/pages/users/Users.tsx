@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Layout from '../../components/layout/Layout';
-
+ 
 interface User {
     id: number;
     username: string;
@@ -9,18 +9,18 @@ interface User {
     email: string;
     rol: { id: number; name: string };
 }
-
+ 
 const Users: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-
+ 
     useEffect(() => {
         api.get('/users')
-            .then(res => setUsers(res.data.data))
+            .then(res => setUsers(res.data.data.data))
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
     }, []);
-
+ 
     return (
         <Layout>
             <div className="flex items-center justify-between mb-6">
@@ -29,7 +29,7 @@ const Users: React.FC = () => {
                     + Nuevo Usuario
                 </button>
             </div>
-
+ 
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
                     <div className="p-8 text-center text-gray-500">Cargando...</div>
@@ -64,5 +64,5 @@ const Users: React.FC = () => {
         </Layout>
     );
 };
-
+ 
 export default Users;
