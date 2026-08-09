@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import Layout from '../components/layout/Layout';
- 
+
 interface DashboardStats {
     socios: number;
     medidores: number;
@@ -10,9 +10,19 @@ interface DashboardStats {
     lecturas: number;
     consumo: number;
 }
- 
+
+// Laravel usa ->paginate(), así que el array real puede venir
+// anidado en res.data.data.data en vez de res.data.data directo.
+const countFromResponse = (res: any): number => {
+    const payload = res?.data?.data;
+    if (Array.isArray(payload)) return payload.length;
+    if (Array.isArray(payload?.data)) return payload.data.length;
+    if (typeof payload?.total === 'number') return payload.total;
+    return 0;
+};
+
 const Dashboard: React.FC = () => {
- 
+
     const [stats, setStats] = useState<DashboardStats>({
         socios: 0,
         medidores: 0,
@@ -21,15 +31,15 @@ const Dashboard: React.FC = () => {
         lecturas: 0,
         consumo: 0,
     });
- 
+
     useEffect(() => {
         fetchStats();
     }, []);
- 
+
     const fetchStats = async () => {
- 
+
         try {
- 
+
             const [
                 sociosRes,
                 medidoresRes,
@@ -41,41 +51,41 @@ const Dashboard: React.FC = () => {
                 api.get('/pagos'),
                 api.get('/facturas'),
             ]);
- 
+
             setStats({
-                socios: sociosRes.data.data?.length ?? 0,
-                medidores: medidoresRes.data.data?.length ?? 0,
-                pagos: pagosRes.data.data?.length ?? 0,
-                facturas: facturasRes.data.data?.length ?? 0,
+                socios: countFromResponse(sociosRes),
+                medidores: countFromResponse(medidoresRes),
+                pagos: countFromResponse(pagosRes),
+                facturas: countFromResponse(facturasRes),
                 lecturas: 0,
                 consumo: 0,
             });
- 
+
         } catch (error) {
- 
+
             console.error(
                 'Error al cargar estadísticas:',
                 error
             );
- 
+
         }
     };
- 
- 
+
+
     return (
- 
+
         <Layout>
- 
+
             {/* =====================================================
                 DASHBOARD
             ====================================================== */}
- 
+
             <section className="
                 relative
                 overflow-hidden
                 min-h-screen
             ">
- 
+
                 {/* =================================================
                     FONDO CON IMAGEN REAL (detrás de todo el contenido)
                 ================================================== */}
@@ -92,7 +102,7 @@ const Dashboard: React.FC = () => {
                         backgroundImage: "url('/images/fondo-dashboard.jpg')",
                     }}
                 />
- 
+
                 {/* OVERLAY MUY SUAVE — deja ver la foto, solo da un poco
                     de contraste arriba/abajo para que el texto se lea */}
                 <div className="
@@ -104,8 +114,8 @@ const Dashboard: React.FC = () => {
                     to-white/20
                     z-0
                 " />
- 
- 
+
+
                 {/* CONTENIDO */}
                 <div className="
                     relative
@@ -117,12 +127,12 @@ const Dashboard: React.FC = () => {
                     pt-14
                     pb-16
                 ">
- 
- 
+
+
                     {/* TITULO */}
- 
+
                     <div className="mb-10">
- 
+
                         <h1 className="
                             text-4xl
                             font-bold
@@ -131,7 +141,7 @@ const Dashboard: React.FC = () => {
                         ">
                             ¡Bienvenido de vuelta!
                         </h1>
- 
+
                         <p className="
                             mt-2
                             text-gray-600
@@ -140,14 +150,14 @@ const Dashboard: React.FC = () => {
                         ">
                             Aquí tienes un resumen general del sistema.
                         </p>
- 
+
                     </div>
- 
- 
+
+
                     {/* =================================================
                         CARDS
                     ================================================== */}
- 
+
                     <div className="
                         grid
                         grid-cols-1
@@ -155,8 +165,8 @@ const Dashboard: React.FC = () => {
                         lg:grid-cols-5
                         gap-5
                     ">
- 
- 
+
+
                         {/* SOCIOS */}
                         <DashboardCard
                             title="SOCIOS"
@@ -164,8 +174,8 @@ const Dashboard: React.FC = () => {
                             description="Total registrados"
                             icon="👥"
                         />
- 
- 
+
+
                         {/* MEDIDORES */}
                         <DashboardCard
                             title="MEDIDORES"
@@ -173,8 +183,8 @@ const Dashboard: React.FC = () => {
                             description="Total activos"
                             icon="◔"
                         />
- 
- 
+
+
                         {/* LECTURAS */}
                         <DashboardCard
                             title="LECTURAS"
@@ -182,8 +192,8 @@ const Dashboard: React.FC = () => {
                             description="Este mes"
                             icon="▤"
                         />
- 
- 
+
+
                         {/* CONSUMO */}
                         <DashboardCard
                             title="CONSUMO"
@@ -191,8 +201,8 @@ const Dashboard: React.FC = () => {
                             description="Este mes"
                             icon="💧"
                         />
- 
- 
+
+
                         {/* FACTURAS */}
                         <DashboardCard
                             title="FACTURAS"
@@ -200,14 +210,14 @@ const Dashboard: React.FC = () => {
                             description="Pendientes"
                             icon="▧"
                         />
- 
+
                     </div>
- 
- 
+
+
                     {/* =================================================
                         ACTIVIDADES
                     ================================================== */}
- 
+
                     <div className="
                         mt-10
                         bg-white/95
@@ -217,15 +227,15 @@ const Dashboard: React.FC = () => {
                         shadow-[0_8px_30px_rgba(15,75,110,0.08)]
                         p-7
                     ">
- 
+
                         <div className="
                             flex
                             items-center
                             justify-between
                         ">
- 
+
                             <div>
- 
+
                                 <h2 className="
                                     text-xl
                                     font-bold
@@ -233,17 +243,17 @@ const Dashboard: React.FC = () => {
                                 ">
                                     Últimas actividades
                                 </h2>
- 
+
                                 <p className="
                                     text-gray-400
                                     mt-1
                                 ">
                                     Resumen de las actividades recientes del sistema.
                                 </p>
- 
+
                             </div>
- 
- 
+
+
                             <div className="
                                 w-12
                                 h-12
@@ -256,10 +266,10 @@ const Dashboard: React.FC = () => {
                             ">
                                 ◷
                             </div>
- 
+
                         </div>
- 
- 
+
+
                         <div className="
                             mt-6
                             h-[135px]
@@ -273,52 +283,52 @@ const Dashboard: React.FC = () => {
                             justify-center
                             text-center
                         ">
- 
+
                             <div className="
                                 text-4xl
                                 mb-3
                             ">
                                 💧
                             </div>
- 
+
                             <p className="text-gray-500">
                                 Aquí aparecerán las últimas lecturas,
                                 pagos y movimientos registrados.
                             </p>
- 
+
                         </div>
- 
+
                     </div>
- 
+
                 </div>
- 
+
             </section>
- 
+
         </Layout>
     );
 };
- 
- 
+
+
 /* =====================================================
    CARD
 ===================================================== */
- 
+
 interface DashboardCardProps {
     title: string;
     value: number | string;
     description: string;
     icon: string;
 }
- 
+
 const DashboardCard: React.FC<DashboardCardProps> = ({
     title,
     value,
     description,
     icon,
 }) => {
- 
+
     return (
- 
+
         <div className="
             bg-white
             border
@@ -332,7 +342,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             hover:-translate-y-1
             hover:shadow-[0_15px_35px_rgba(15,75,110,0.13)]
         ">
- 
+
             <div className="
                 w-16
                 h-16
@@ -347,8 +357,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             ">
                 {icon}
             </div>
- 
- 
+
+
             <p className="
                 text-sm
                 font-medium
@@ -357,8 +367,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             ">
                 {title}
             </p>
- 
- 
+
+
             <p className="
                 text-4xl
                 font-bold
@@ -367,8 +377,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             ">
                 {value}
             </p>
- 
- 
+
+
             <p className="
                 text-sm
                 text-[#8BA0B5]
@@ -376,10 +386,10 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
             ">
                 {description}
             </p>
- 
+
         </div>
- 
+
     );
 };
- 
+
 export default Dashboard;
